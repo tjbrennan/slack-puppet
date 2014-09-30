@@ -3,7 +3,7 @@ var request = require('request');
 var bodyParser = require('body-parser');
 
 var app = express();
-var port = 3000;
+var port = process.env.PORT || 3000;
 
 var args = process.argv;
 var team = args[2];
