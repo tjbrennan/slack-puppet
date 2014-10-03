@@ -125,7 +125,7 @@ app.use(function (req, res, next) {
 });
 
 
-app.post('/puppet', parseCommand);//, sendBot);
+app.post('/puppet', parseCommand, sendBot);
 
 
 // error handler
