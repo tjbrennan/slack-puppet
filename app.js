@@ -1,3 +1,5 @@
+'use strict'; // don't be a dummy
+
 var express = require('express');
 var request = require('request');
 var bodyParser = require('body-parser');
@@ -43,11 +45,11 @@ function parseCommand (req, res, next) {
   bot.channel = '#' + channel;
 
   // check for saved icon and set new icon
-  var lastBot = botCache[bot.username];
+  var lastBot = botCache[bot.username.replace(/\s+/g, '_')];
   if (!icon && lastBot) {
     bot['icon_' + lastBot.type] = lastBot.value;
   } else {
-    botCache[bot.username.replace(/\s+/g, '')] = icon;
+    botCache[bot.username.replace(/\s+/g, '_')] = icon;
   }
 
   // stash bot
@@ -91,7 +93,7 @@ function testIcon (icon) {
 
   if (/:.+:/.test(icon)) {
     iconObj.type = 'emoji';
-  } else if (/http.+\.[a-z]{3}/) {
+  } else if (/http.+\.[a-z]{3}/.test(icon)) {
     iconObj.type = 'url';
   } else {
     return undefined;
