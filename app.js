@@ -23,7 +23,7 @@ function parseCommand (req, res, next) {
 
   // ensure message is wrapped in quotation marks
   if (!matches) {
-    return next('<name> <icon> "<message>"');
+    return next('name :icon: "message"');
   }
 
   var message = matches[2];
@@ -47,7 +47,7 @@ function parseCommand (req, res, next) {
   if (!icon && lastBot) {
     bot['icon_' + lastBot.type] = lastBot.value;
   } else {
-    botCache[bot.username] = icon;
+    botCache[bot.username.replace(/\s+/g, '')] = icon;
   }
 
   // stash bot
@@ -100,15 +100,14 @@ function testIcon (icon) {
   return iconObj;
 }
 
-
-
 app.use(bodyParser.urlencoded({
   extended : true
 }));
 
+// verify incoming webhook credentials have been provided
 app.use(function (req, res, next) {
   if (!team || !token) {
-    return next('Server error!');
+    return res.status(404).send('Server error!');
   }
 
   next();
@@ -125,11 +124,16 @@ app.use(function (req, res, next) {
   next();
 });
 
+
+app.post('/puppet', parseCommand);//, sendBot);
+
+
 // error handler
 app.use(function (err, req, res, next) {
   console.error(err);
 
   if (typeof err === 'string') {
+    res.set('Content-Type', 'text/plain');
     return res.status(200).send(err);
   } else {
     return res.status(400).send(err);
@@ -137,7 +141,6 @@ app.use(function (err, req, res, next) {
 });
 
 
-app.post('/puppet', parseCommand, sendBot);
 
 app.listen(port, function () {
   console.log('Puppeteer listening on port ' + port);
