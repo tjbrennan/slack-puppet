@@ -1,3 +1,4 @@
+var request = require('request');
 var cash = {};
 var last = {};
 
@@ -45,7 +46,11 @@ function parseCommand (req, delimiter, lastCmd) {
     message = matches[1];
   } else {
     icon = testIcon(matches[1].trim());
-    cash[name] = icon;
+    if (icon) {
+      cash[name] = icon;
+    } else {
+      icon = cash[name];
+    }
     message = matches[2];
   }
 
