@@ -23,6 +23,8 @@ app.use(function (req, res, next) {
   res.locals.delimiter = delimiter;
   res.locals.lastCmd = lastCmd;
 
+  console.log(req.body.user_name, req.body.text);
+
   next();
 });
 
