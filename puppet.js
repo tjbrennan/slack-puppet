@@ -34,8 +34,13 @@ function parseCommand (req, delimiter, lastCmd) {
   var name = matches[0].trim();
 
   if (lastCmd && name === lastCmd) {
-    last.text = matches[1];
-    return last;
+    if (last[req.body.user_id]) {
+      bot = last[req.body.user_id];
+      bot.text = matches[1];
+      return bot;
+    } else {
+      return null;
+    }
   }
 
   var icon;
@@ -62,12 +67,17 @@ function parseCommand (req, delimiter, lastCmd) {
     bot['icon_' + icon.type] = icon.value;
   }
 
-  last = bot;
+  last[req.body.user_id] = bot;
 
   return bot;
 }
 
 function sendBot (token, payload, callback) {
+  if (!token) {
+    return callback('No token');
+  } else if (!payload) {
+    return callback('No payload');
+  }
   var uri = 'https://hooks.slack.com/services' + token;
 
   request({
